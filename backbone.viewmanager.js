@@ -2,6 +2,9 @@ define(['underscore', 'backbone'], function(_, Backbone) {
 
   var ViewManager = function() {
     this._cache = {};
+    this._inChange = false;
+    this._inMissing = false;
+    this._queue = [];
   }
 
   _.extend(ViewManager.prototype, {
@@ -27,6 +30,11 @@ define(['underscore', 'backbone'], function(_, Backbone) {
       if(!viewSrc)
         return;
 
+      if(this._inChange)
+        return this._queue.push([state, args, callback]);
+
+      this._inChange = true;
+
       if(!this._cache[state])
         this._cache[state] = [];
 
@@ -45,6 +53,15 @@ define(['underscore', 'backbone'], function(_, Backbone) {
             $this._cache[state][i] = view;
           }
           view.render.apply(view, args);
+        }
+        $this._inChange = false;
+
+        if(!$this._inMissing && $this._queue.length) {
+          $this._inMissing = true;
+          while($this._queue.length) {
+            $this.enter.apply($this, $this._queue.pop());
+          }
+          $this._inMissing = false;
         }
         if(callback)
           callback(true);
