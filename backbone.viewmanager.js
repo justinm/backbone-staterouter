@@ -74,7 +74,10 @@ define(['underscore', 'backbone'], function(_, Backbone) {
 
       for(var i=0;i<this._cache[state].length;i++) {
         var view = this._cache[state][i];
-        view.close.call(view);
+        if(view.close != undefined)
+          view.close.call(view);
+        else
+          view.remove.call(view);
         if(!view.cacheable || !view.cacheable())
           delete this._cache[state][i];
       }
