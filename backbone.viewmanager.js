@@ -69,11 +69,14 @@ define(['underscore', 'backbone'], function(_, Backbone) {
 
     },
     leave: function(state, args, callback) {
+      if(!this._cache[state])
+        return;
+
       for(var i=0;i<this._cache[state].length;i++) {
         var view = this._cache[state][i];
         view.close.call(view);
         if(!view.cacheable || !view.cacheable())
-          this._cache[state][i] = null;
+          delete this._cache[state][i];
       }
     },
   });
