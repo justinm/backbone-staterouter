@@ -49,10 +49,10 @@ define(['underscore', 'backbone'], function(_, Backbone) {
           if($this._cache[state][i])
             view = $this._cache[state][i];
           else {
-            view = new arguments[pos++]();
+            view = new arguments[pos++](args);
             $this._cache[state][i] = view;
           }
-          view.render.apply(view, args);
+          view.render.apply(view);
         }
         $this._inChange = false;
 
@@ -71,7 +71,7 @@ define(['underscore', 'backbone'], function(_, Backbone) {
     leave: function(state, args, callback) {
       for(var i=0;i<this._cache[state].length;i++) {
         var view = this._cache[state][i];
-        view.close.apply(view, args);
+        view.close.call(view);
         if(!view.cacheable || !view.cacheable())
           this._cache[state][i] = null;
       }
