@@ -44,27 +44,43 @@ define(['underscore', 'backbone'], function(_, Backbone) {
       }
 
       require(load, function() {
-        var pos = 0;
-        for(var i=0;i<$this.states[state].length;i++) {
-          if($this._cache[state][i])
-            view = $this._cache[state][i];
-          else {
-            view = new arguments[pos++](args);
-            $this._cache[state][i] = view;
-          }
-          view.render.apply(view);
-        }
-        $this._inChange = false;
+        var pos = 0,
+            cur = 0,
+            loaded = arguments;
 
-        if(!$this._inMissing && $this._queue.length) {
-          $this._inMissing = true;
-          while($this._queue.length) {
-            $this.enter.apply($this, $this._queue.pop());
+        var loadViews = function(start, skip) {
+          for(var i=start;i<$this.states[state].length;i++) {
+            if($this._cache[state][i])
+              view = $this._cache[state][i];
+            else {
+              view = new loaded[pos++](args);
+              $this._cache[state][i] = view;
+            }
+            if(view.prep != undefined) {
+              if(!skip) {
+                view.prep(function(success) {
+                  if(success)
+                    loadViews(i, true);
+                });
+                return false;
+              }
+              skip = false;
+            }
+            view.render.apply(view);
           }
-          $this._inMissing = false;
+          $this._inChange = false;
+
+          if(!$this._inMissing && $this._queue.length) {
+            $this._inMissing = true;
+            while($this._queue.length) {
+              $this.enter.apply($this, $this._queue.pop());
+            }
+            $this._inMissing = false;
+          }
+          if(callback)
+            callback(true);
         }
-        if(callback)
-          callback(true);
+        loadViews(0);
       })
 
     },
@@ -81,7 +97,7 @@ define(['underscore', 'backbone'], function(_, Backbone) {
         if(!view.cacheable || !view.cacheable())
           delete this._cache[state][i];
       }
-    },
+    }
   });
 
   ViewManager.extend = Backbone.Model.extend;
