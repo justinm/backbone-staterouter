@@ -70,12 +70,9 @@ define(['underscore', 'backbone'], function(_, Backbone) {
           }
           $this._inChange = false;
 
-          if(!$this._inMissing && $this._queue.length) {
-            $this._inMissing = true;
-            while($this._queue.length) {
-              $this.enter.apply($this, $this._queue.pop());
-            }
-            $this._inMissing = false;
+          if($this._queue.length) {
+            var q = $this._queue.pop();
+            $this.enter.apply($this, q);
           }
           if(callback)
             callback(true);
