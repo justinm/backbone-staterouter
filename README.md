@@ -1,7 +1,7 @@
-## backbone-viewstate
+## backbone-staterouter
 
-The backbone-viewstate library allows for backbone apps to easily allow for multiple
-entry points into the application.  This is possible by tieing views to states.  
+The backbone-staterouter library allows for backbone apps to easily allow for multiple
+entry points into the application.  This is possible by tieing views to states.
 
 ### Requirements
 * BackboneJS

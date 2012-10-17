@@ -1,14 +1,13 @@
-define(['backbone', 'app'], function(Backbone, app) {
-  var Router = Backbone.Router.extend({
-    routes: {
-      'example':      'example',
-      'closed':       'closed'
+define(['backbone', 'app', 'staterouter'], function(Backbone, app, StateRouter) {
+  var Router = StateRouter.extend({
+    states: {
+      'example':        'app.example',
+      'closed':         'app.closed'
     },
-    example: function() {
-      app.stateManager.jumpTo('app.example');
-    },
-    closed: function() {
-      app.stateManager.jumpTo('app.closed');
+    views: {
+      'app':          [ 'views/layout' ],
+      'app.example':  [ 'views/example' ],
+      'app.closed':   [ 'views/closed' ]
     }
   });
 
