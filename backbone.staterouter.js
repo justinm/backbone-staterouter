@@ -35,12 +35,23 @@ define(['underscore', 'backbone'], function(_, Backbone) {
     _bindStates: function() {
       if(!this.states)
         return;
-      var states  = this.states,
+      var states  = [],
           $this   = this;
-      _.each(this.states, function(state, fragment) {
-        $this.route(fragment, '', function() {
-          $this.jumpTo(state, {args: arguments});
-        });
+      for(state in this.states)
+        states.unshift([state, this.states[state]]);;
+
+      for(var i=0; i<states.length; i++) {
+        (function() {
+          var fragment  = states[i][0],
+              state     = states[i][1];
+
+          $this.route(fragment, '', function() {
+            $this.jumpTo(state, {args: arguments});
+          });
+        })();
+      }
+
+      _.each(states, function(state, fragment) {
       });
     },
     _changeStates: function(states, opts) {
