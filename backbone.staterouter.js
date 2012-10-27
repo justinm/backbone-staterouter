@@ -170,7 +170,7 @@ define(['underscore', 'backbone'], function(_, Backbone) {
           $this._inChange = false;
 
           if($this._viewQueue.length) {
-            var q = $this._viewQueue.pop();
+            var q = $this._viewQueue.shift();
             $this.enterView.apply($this, q);
           }
           if(callback)
